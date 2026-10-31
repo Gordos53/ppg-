@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPG++ // WORKSHOP</title>
+    <style>
+        :root {
+            --bg-color: #0d0f12;
+            --panel-bg: #15181e;
+            --border-color: #2b303c;
+            --accent-red: #8b0000;
+            --accent-red-hover: #b22222;
+            --text-main: #c0c8d0;
+            --text-title: #ffffff;
+            --text-dim: #6c757d;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            background-image: 
+                linear-gradient(rgba(25, 30, 40, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(25, 30, 40, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        header {
+            background-color: var(--panel-bg);
+            border-bottom: 3px solid var(--accent-red);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--text-title);
+            font-size: 22px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        header h1 span {
+            color: var(--accent-red);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-bar {
+            padding: 8px 12px;
+            width: 250px;
+            border: 2px solid var(--border-color);
+            background: #090a0c;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-bar:focus {
+            border-color: var(--accent-red);
+        }
+
+        .btn-upload {
+            background-color: #1c212b;
+            color: #fff;
+            border: 2px solid var(--accent-red);
+            padding: 8px 16px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-upload:hover {
+            background-color: var(--accent-red);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: var(--text-title);
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent-red);
+            padding-left: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* GRID VIEW */
+        .workshop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .mod-card {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.1s, border-color 0.1s;
+        }
+
+        .mod-card:hover {
+            transform: translate(-2px, -2px);
+            border-color: var(--accent-red);
+        }
+
+        .mod-img {
+            width: 100%;
+            height: 140px;
+            background-color: #0b0d10;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            font-size: 12px;
+            object-fit: cover;
+        }
+
+        .mod-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .mod-title {
+            font-size: 15px;
+            color: var(--text-title);
+            margin: 0 0 6px 0;
+            font-weight: bold;
+        }
+
+        .mod-author {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        /* DETAILED MOD PAGE VIEW */
+        .mod-page {
+            display: none;
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            padding: 25px;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.6);
+        }
+
+        .back-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            font-family: inherit;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        .mod-page-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        .mod-page-preview {
+            width: 100%;
+            height: 240px;
+            background-color: #0b0d10;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            object-fit: cover;
+        }
+
+        .btn-subscribe {
+            width: 100%;
+            margin-top: 15px;
+            background-color: var(--accent-red);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .btn-subscribe:hover {
+            background-color: var(--accent-red-hover);
+        }
+
+        /* MODAL DIALOG FOR UPLOADING */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background-color: var(--panel-bg);
+            border: 3px solid var(--accent-red);
+            padding: 30px;
+            width: 500px;
+            box-shadow: 8px 8px 0px #000;
+        }
+
+        .modal-box h2 {
+            margin-top: 0;
+            color: var(--text-title);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            background: #090a0c;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 onclick="showCatalog()">PPG++ <span>// WORKSHOP</span></h1>
+        <div class="header-controls">
+            <input type="text" class="search-bar" placeholder="ПОИСК ОБЪЕКТА..." id="searchInput" onkeyup="filterMods()">
+            <button class="btn-upload" onclick="openUploadModal()">[ + ВЫЛОЖИТЬ МОД ]</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- КАТАЛОГ (СПИСОК МОДОВ) -->
+        <div id="catalogSection">
+            <div class="section-title">Доступные модификации и тестовые образцы</div>
+            <div class="workshop-grid" id="modsGrid"></div>
+        </div>
+
+        <!-- СТРАНИЦА ОДНОГО МОДА -->
+        <div class="mod-page" id="modPage">
+            <button class="back-btn" onclick="showCatalog()">← ВЕРНУТЬСЯ В КАТАЛОГ</button>
+            <div class="mod-page-layout">
+                <div>
+                    <img id="pageModImg" class="mod-page-preview" src="" alt="Mod Preview">
+                    <button class="btn-subscribe" id="subscribeBtn">SUBSCRIBE (СКАЧАТЬ В ИГРУ)</button>
+                </div>
+                <div>
+                    <h1 id="pageModTitle" style="color:#fff; margin-top:0;"></h1>
+                    <div id="pageModAuthor" class="mod-author"></div>
+                    <hr style="border-color: var(--border-color); margin: 20px 0;">
+                    <div id="pageModDesc" style="line-height:1.6;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПУБЛИКАЦИИ МОДА -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-box">
+            <h2>Публикация объекта</h2>
+            <form id="uploadForm" onsubmit="handleModUpload(event)">
+                <div class="form-group">
+                    <label>Название модификации</label>
+                    <input type="text" id="modNameInput" required placeholder="Например: Плазменный резак">
+                </div>
+                <div class="form-group">
+                    <label>Автор</label>
+                    <input type="text" id="modAuthorInput" required placeholder="Например: Developer">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="modDescInput" rows="4" required placeholder="Подробное описание функций..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ссылка на файл мода (.zip / .dll / .json)</label>
+                    <input type="url" id="modFileInput" required placeholder="https://github.com/.../mod.zip">
+                </div>
+                <div class="form-group">
+                    <label>Ссылка на картинку превью (.png / .jpg)</label>
+                    <input type="url" id="modImgInput" placeholder="https://.../preview.png">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="back-btn" onclick="closeUploadModal()">ОТМЕНА</button>
+                    <button type="submit" class="btn-upload">ОПУБЛИКОВАТЬ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // БАЗА ДАННЫХ МОДОВ (Можно загружать динамически из JSON на GitHub)
+        let modsData = [
+            {
+                id: "mod_1",
+                title: "Экспериментальный Лазер",
+                author: "Lab_Technician",
+                desc: "Лазерная винтовка высокой мощности с мгновенным прожиганием тканей и расчленением костей.",
+                fileUrl: "https://github.com/YourUser/YourRepo/raw/main/mods/laser.zip",
+                imgUrl: "https://via.placeholder.com/350x240/15181e/8b0000?text=LASER+WEAPON"
+            },
+            {
+                id: "mod_2",
+                title: "Полигон: Тест Прочности",
+                author: "PolovnikGames",
+                desc: "Стандартная испытательная камера с прессами, пилами и кислотными ваннами для краш-теста персонажей.",
+                fileUrl: "https://github.com/YourUser/YourRepo/raw/main/mods/test_chamber.zip",
+                imgUrl: "https://via.placeholder.com/350x240/15181e/8b0000?text=TEST+CHAMBER"
+            }
+        ];
+
+        // Отрисовка списка модов
+        function renderMods() {
+            const grid = document.getElementById('modsGrid');
+            grid.innerHTML = '';
+
+            modsData.forEach(mod => {
+                const card = document.createElement('div');
+                card.className = 'mod-card';
+                card.onclick = () => openModPage(mod.id);
+
+                card.innerHTML = `
+                    <img class="mod-img" src="${mod.imgUrl}" alt="${mod.title}">
+                    <div class="mod-content">
+                        <h3 class="mod-title">${mod.title}</h3>
+                        <div class="mod-author">АВТОР: ${mod.author}</div>
+                        <div class="mod-desc">${mod.desc.substring(0, 75)}...</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Переход на страницу мода
+        function openModPage(modId) {
+            const mod = modsData.find(m => m.id === modId);
+            if (!mod) return;
+
+            document.getElementById('catalogSection').style.display = 'none';
+            document.getElementById('modPage').style.display = 'block';
+
+            document.getElementById('pageModTitle').innerText = mod.title;
+            document.getElementById('pageModAuthor').innerText = 'АВТОР: ' + mod.author;
+            document.getElementById('pageModDesc').innerText = mod.desc;
+            document.getElementById('pageModImg').src = mod.imgUrl;
+
+            // Кастомный URI для автоматического скачивания в Unity-игру!
+            document.getElementById('subscribeBtn').onclick = () => {
+                window.location.href = `ppgmod://install?url=${encodeURIComponent(mod.fileUrl)}&name=${encodeURIComponent(mod.title)}`;
+            };
+        }
+
+        // Показ каталога
+        function showCatalog() {
+            document.getElementById('catalogSection').style.display = 'block';
+            document.getElementById('modPage').style.display = 'none';
+        }
+
+        // Управление модальным окном публикации
+        function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+        function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
+
+        // Добавление нового мода
+        function handleModUpload(event) {
+            event.preventDefault();
+
+            const newMod = {
+                id: "mod_" + (modsData.length + 1),
+                title: document.getElementById('modNameInput').value,
+                author: document.getElementById('modAuthorInput').value,
+                desc: document.getElementById('modDescInput').value,
+                fileUrl: document.getElementById('modFileInput').value,
+                imgUrl: document.getElementById('modImgInput').value || "https://via.placeholder.com/350x240/15181e/8b0000?text=NO+IMAGE"
+            };
+
+            modsData.unshift(newMod);
+            renderMods();
+            closeUploadModal();
+            document.getElementById('uploadForm').reset();
+            alert("Мод успешно опубликован в мастерской!");
+        }
+
+        function filterMods() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('mod-card');
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].getElementsByClassName('mod-title')[0].innerText.toLowerCase();
+                cards[i].style.display = title.includes(input) ? "" : "none";
+            }
+        }
+
+        // Инициализация при старте
+        renderMods();
+    </script>
+</body>
+</html>
